@@ -133,7 +133,7 @@ ansible-playbook -i inventories/prod/hosts.yml playbooks/webapp.yml --vault-id d
 
 ## 🔍 Code Quality and Linting
 
-This project includes ansible-lint configuration for maintaining code quality and best practices.
+This project includes both ansible-lint and yamllint configurations for maintaining code quality and best practices.
 
 ### Running ansible-lint
 
@@ -153,4 +153,106 @@ ansible-lint --list-rules
 
 # Generate a report
 ansible-lint --format json > lint-report.json
+```
+
+### Running yamllint
+
+yamllint validates YAML syntax and formatting across all project files:
+
+```bash
+# Install yamllint
+pip install yamllint
+
+# Lint all YAML files in the project
+yamllint .
+
+# Lint specific files
+yamllint playbooks/webapp.yml
+yamllint inventories/dev/hosts.yml
+
+# Lint with specific format
+yamllint -f parsable .
+
+# Show configuration being used
+yamllint --print-config
+
+# Lint and show only errors (ignore warnings)
+yamllint -d relaxed .
+```
+
+### Running Both Linters with lint.sh
+
+The project includes a convenient script that runs both ansible-lint and yamllint together:
+
+```bash
+# Make the script executable (first time only)
+chmod +x lint.sh
+
+# Run both linters
+./lint.sh
+```
+
+The `lint.sh` script provides:
+
+- **Colored output** for easy reading (green for success, red for errors, yellow for info)
+- **Summary report** showing which linters passed or failed
+- **Error counting** to track the number of issues found
+- **Helpful suggestions** on how to run individual linters for detailed output
+- **Exit codes** for CI/CD integration (0 = success, 1 = issues found)
+
+#### Script Output Example
+
+When all checks pass:
+```
+🔍 Running Ansible and YAML linting...
+========================================
+
+📋 Running ansible-lint...
+----------------------------------------
+✅ ansible-lint: No issues found
+
+📝 Running yamllint...
+----------------------------------------
+✅ yamllint: No issues found
+
+📊 Summary
+========================================
+🎉 All linting checks passed!
+```
+
+When issues are found:
+```
+🔍 Running Ansible and YAML linting...
+========================================
+
+📋 Running ansible-lint...
+----------------------------------------
+❌ ansible-lint: Issues found
+
+📝 Running yamllint...
+----------------------------------------
+✅ yamllint: No issues found
+
+📊 Summary
+========================================
+⚠️  Some linting issues found:
+  - ansible-lint: Failed
+
+Run the individual commands to see detailed output:
+  ansible-lint playbooks/ roles/
+```
+
+#### Integration with CI/CD
+
+The script is designed to work well in automated environments:
+
+```bash
+# In your CI/CD pipeline
+./lint.sh
+if [ $? -eq 0 ]; then
+    echo "Linting passed, proceeding with deployment"
+else
+    echo "Linting failed, stopping pipeline"
+    exit 1
+fi
 ```

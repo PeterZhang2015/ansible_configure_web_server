@@ -1,6 +1,6 @@
 ---
 # Ansible-lint configuration file
-# See https://ansible-lint.readthedocs.io/en/latest/configuring.html
+# See https://docs.ansible.com/projects/lint/configuring/
 
 # List of additional kind:pattern to be added to the default set of build ignore patterns
 exclude_paths:
