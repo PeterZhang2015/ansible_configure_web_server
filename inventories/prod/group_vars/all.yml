@@ -1,0 +1,5 @@
+---
+# Production SSH configuration
+ansible_user: ubuntu
+ansible_ssh_private_key_file: ~/.ssh/prod_rsa
+ansible_ssh_common_args: '-o StrictHostKeyChecking=yes'

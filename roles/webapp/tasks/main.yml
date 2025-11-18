@@ -1,0 +1,17 @@
+---
+# Simplified webapp deployment
+- name: Create web directory
+  file:
+    path: "{{ document_root }}"
+    state: directory
+    owner: "{{ 'www-data' if ansible_os_family == 'Debian' else 'nginx' }}"
+    group: "{{ 'www-data' if ansible_os_family == 'Debian' else 'nginx' }}"
+    mode: '0755'
+
+- name: Deploy HTML page
+  template:
+    src: index.html.j2
+    dest: "{{ document_root }}/index.html"
+    owner: "{{ 'www-data' if ansible_os_family == 'Debian' else 'nginx' }}"
+    group: "{{ 'www-data' if ansible_os_family == 'Debian' else 'nginx' }}"
+    mode: '0644'

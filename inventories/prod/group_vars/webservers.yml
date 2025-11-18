@@ -1,0 +1,5 @@
+---
+# Production environment
+environment_name: "Production"
+nginx_port: 80
+enable_firewall: true

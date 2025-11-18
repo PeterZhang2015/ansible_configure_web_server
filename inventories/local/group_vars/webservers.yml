@@ -1,0 +1,4 @@
+---
+# Local environment
+environment_name: "Local Development"
+nginx_port: 8080

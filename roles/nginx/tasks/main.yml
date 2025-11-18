@@ -1,0 +1,53 @@
+---
+# Simplified nginx installation and configuration
+- name: Update package cache (Debian/Ubuntu)
+  apt:
+    update_cache: yes
+    cache_valid_time: 3600
+  when: ansible_os_family == "Debian"
+
+- name: Update package cache (RedHat/CentOS)
+  yum:
+    update_cache: yes
+  when: ansible_os_family == "RedHat"
+
+- name: Install nginx
+  package:
+    name: nginx
+    state: present
+
+- name: Configure nginx default site
+  template:
+    src: default.conf.j2
+    dest: "{{ '/etc/nginx/sites-available/default' if ansible_os_family == 'Debian' else '/etc/nginx/conf.d/default.conf' }}"
+    backup: yes
+  notify: restart nginx
+
+- name: Enable default site (Debian/Ubuntu only)
+  file:
+    src: /etc/nginx/sites-available/default
+    dest: /etc/nginx/sites-enabled/default
+    state: link
+  when: ansible_os_family == "Debian"
+  notify: restart nginx
+
+- name: Start and enable nginx service
+  systemd:
+    name: nginx
+    state: started
+    enabled: yes
+
+- name: Open firewall for HTTP
+  ufw:
+    rule: allow
+    port: "{{ nginx_port }}"
+    proto: tcp
+  when: ansible_os_family == "Debian" and enable_firewall | default(false)
+
+- name: Open firewall for HTTP (RedHat/CentOS)
+  firewalld:
+    port: "{{ nginx_port }}/tcp"
+    permanent: yes
+    state: enabled
+    immediate: yes
+  when: ansible_os_family == "RedHat" and enable_firewall | default(false)

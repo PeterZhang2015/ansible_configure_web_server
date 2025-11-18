@@ -1,0 +1,14 @@
+---
+# Multi-environment webapp deployment
+# Usage: 
+#   Local:       ansible-playbook -i inventories/local/hosts.yml playbooks/webapp.yml
+#   Development: ansible-playbook -i inventories/dev/hosts.yml playbooks/webapp.yml
+#   Production:  ansible-playbook -i inventories/prod/hosts.yml playbooks/webapp.yml
+
+- name: Deploy Web Application
+  hosts: webservers
+  become: yes
+  
+  roles:
+    - nginx
+    - webapp

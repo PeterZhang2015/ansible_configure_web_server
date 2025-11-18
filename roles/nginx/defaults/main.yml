@@ -1,0 +1,5 @@
+---
+# Simplified nginx variables
+nginx_port: 80
+document_root: /var/www/html
+enable_firewall: false
