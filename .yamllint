@@ -31,8 +31,9 @@ rules:
   # Allow different newline characters (Windows/Unix compatibility)
   new-line-at-end-of-file: disable
 
-  # Don't enforce specific newline characters
-  new-lines: disable
+  # Allow different newline characters (Windows/Unix compatibility)
+  new-lines:
+    type: unix
 
 # Ignore certain paths
 ignore: |
