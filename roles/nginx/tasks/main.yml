@@ -19,7 +19,9 @@
 - name: Configure nginx default site
   ansible.builtin.template:
     src: default.conf.j2
-    dest: "{{ '/etc/nginx/sites-available/default' if ansible_os_family == 'Debian' else '/etc/nginx/conf.d/default.conf' }}"
+    dest: >-
+      {{ '/etc/nginx/sites-available/default' if ansible_os_family == 'Debian'
+         else '/etc/nginx/conf.d/default.conf' }}
     backup: true
     mode: '0644'
   notify: restart nginx
