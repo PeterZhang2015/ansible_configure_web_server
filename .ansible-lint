@@ -1,0 +1,48 @@
+---
+# Ansible-lint configuration file
+# See https://ansible-lint.readthedocs.io/en/latest/configuring.html
+
+# List of additional kind:pattern to be added to the default set of build ignore patterns
+exclude_paths:
+  - .cache/  # implicit unless exclude_paths is defined in config
+  - .github/
+  - .vault_pass
+  - inventories/*/host_vars/*/vault_*
+
+# Ansible-lint completely ignores rules/tags listed below
+skip_list:
+  - yaml[line-length]  # Allow longer lines in YAML files
+  - name[casing]       # Allow flexible naming conventions
+
+# Report only a subset of tags and fully ignore any others
+# tags:
+#   - var-spacing
+
+# This makes linter to fully ignore rules/tags listed below
+warn_list:
+  - experimental  # all rules tagged as experimental
+  - fqcn-builtins  # Use FQCN for builtin actions
+  - no-changed-when  # Commands should not change things if nothing needs doing
+
+# Ansible-lint does not automatically load rules that have the 'opt-in' tag.
+# You must enable opt-in rules by listing each rule 'id' below:
+enable_list:
+  - args
+  - empty-string-compare
+  - no-log-password
+  - no-same-owner
+
+# Offline mode disables installation of requirements.yml
+offline: false
+
+# Define required Ansible's variables to satisfy syntax check
+var_naming_pattern: "^[a-z_][a-z0-9_]*$"
+
+# Uncomment to enforce action validation with tasks, usually is not
+# needed as Ansible syntax check also covers it.
+# skip_action_validation: false
+
+# List of additional collections to allow in only when using minimum required version:
+# required_collections:
+#   - name: community.general
+#     version: ">=1.0.0"

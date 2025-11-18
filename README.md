@@ -58,6 +58,9 @@ sudo yum install epel-release && sudo yum install ansible
 
 # macOS
 brew install ansible
+
+# Install ansible-lint for code quality checking (optional but recommended)
+pip install ansible-lint
 ```
 
 #### Create Vault Password File
@@ -126,4 +129,28 @@ ansible-playbook -i inventories/dev/hosts.yml playbooks/webapp.yml --vault-id de
 
 # Deploy to production
 ansible-playbook -i inventories/prod/hosts.yml playbooks/webapp.yml --vault-id default@.vault_pass --ask-become-pass
+```
+
+## 🔍 Code Quality and Linting
+
+This project includes ansible-lint configuration for maintaining code quality and best practices.
+
+### Running ansible-lint
+
+```bash
+# Lint all playbooks and roles
+ansible-lint
+
+# Lint specific files
+ansible-lint playbooks/webapp.yml
+ansible-lint roles/nginx/tasks/main.yml
+
+# Lint with specific rules only
+ansible-lint --tags yaml,syntax
+
+# Show all available rules
+ansible-lint --list-rules
+
+# Generate a report
+ansible-lint --format json > lint-report.json
 ```
