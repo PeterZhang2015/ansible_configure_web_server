@@ -30,19 +30,16 @@ This Ansible project automates the setup of nginx web servers across multiple en
 ### Local Environment
 - **Purpose**: Local development and testing
 - **Port**: 8080
-- **Features**: Debug mode enabled, no firewall restrictions
 - **Access**: http://localhost:8080
 
 ### Development Environment
 - **Purpose**: Team development and integration testing
 - **Port**: 8080
-- **Features**: Debug mode enabled, basic firewall, development tools
 - **Hosts**: Configurable development servers
 
 ### Production Environment
 - **Purpose**: Live production deployment
 - **Port**: 80 (HTTP) / 443 (HTTPS)
-- **Features**: Security hardened, performance optimized, backup enabled
 - **Hosts**: Production server cluster
 
 ## 🚀 Quick Start
