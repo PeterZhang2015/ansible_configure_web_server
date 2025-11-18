@@ -9,7 +9,7 @@ app_port: 8080
 app_environment: local
 
 # Non-sensitive variables
-nginx_worker_processes: 2
+nginx_worker_processes: 1
 nginx_worker_connections: 1024
 
 # Encrypted sensitive variables
