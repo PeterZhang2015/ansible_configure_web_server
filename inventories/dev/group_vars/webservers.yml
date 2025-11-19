@@ -2,4 +2,4 @@
 # Development environment
 environment_name: "Development"
 nginx_port: 8080
-enable_firewall: true
+nginx_enable_firewall: true
