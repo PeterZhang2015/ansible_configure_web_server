@@ -3,11 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{ app_name }}</title>
+    <title>{{ webapp_app_name }}</title>
 </head>
 <body>
-    <h1>{{ app_name }}</h1>
-    <p>{{ custom_message }}</p>
+    <h1>{{ webapp_app_name }}</h1>
+    <p>{{ webapp_custom_message }}</p>
     <p>Server: {{ ansible_hostname }}</p>
     <p>Environment: {{ environment_name | default('Web Server') }}</p>
 </body>

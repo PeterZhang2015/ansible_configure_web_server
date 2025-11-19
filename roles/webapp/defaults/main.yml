@@ -1,4 +1,5 @@
 ---
 # Simplified webapp variables
-app_name: "Ansible Web Server"
-custom_message: "Welcome to our web server!"
+webapp_app_name: "Ansible Web Server"
+webapp_custom_message: "Welcome to our web server!"
+webapp_document_root: /var/www/html

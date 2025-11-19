@@ -4,7 +4,7 @@ ansible_connection: local
 ansible_host: localhost
 
 # Application configuration
-app_name: webapp-local
+webapp_app_name: webapp-local
 app_port: 8080
 app_environment: local
 

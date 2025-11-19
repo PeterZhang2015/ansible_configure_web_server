@@ -2,7 +2,7 @@
 # Simplified webapp deployment
 - name: Create web directory
   ansible.builtin.file:
-    path: "{{ document_root }}"
+    path: "{{ webapp_document_root }}"
     state: directory
     owner: "{{ 'www-data' if ansible_os_family == 'Debian' else 'nginx' }}"
     group: "{{ 'www-data' if ansible_os_family == 'Debian' else 'nginx' }}"
@@ -11,7 +11,7 @@
 - name: Deploy HTML page
   ansible.builtin.template:
     src: index.html.j2
-    dest: "{{ document_root }}/index.html"
+    dest: "{{ webapp_document_root }}/index.html"
     owner: "{{ 'www-data' if ansible_os_family == 'Debian' else 'nginx' }}"
     group: "{{ 'www-data' if ansible_os_family == 'Debian' else 'nginx' }}"
     mode: '0644'

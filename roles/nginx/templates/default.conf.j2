@@ -1,6 +1,6 @@
 server {
     listen {{ nginx_port }} default_server;
-    root {{ document_root }};
+    root {{ nginx_document_root }};
     index index.html;
     server_name _;
 

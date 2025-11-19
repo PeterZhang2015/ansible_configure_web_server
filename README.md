@@ -131,6 +131,24 @@ ansible-playbook -i inventories/dev/hosts.yml playbooks/webapp.yml --vault-id de
 ansible-playbook -i inventories/prod/hosts.yml playbooks/webapp.yml --vault-id default@.vault_pass --ask-become-pass
 ```
 
+## 🧪 Testing
+
+This project uses Molecule for automated testing with Docker. See [TESTING.md](TESTING.md) for detailed instructions.
+
+### Quick Test Commands
+
+```bash
+# Install test dependencies
+pip install -r requirements-test.txt
+
+# Run all tests
+molecule test
+
+# Test individual roles
+cd roles/nginx && molecule test
+cd roles/webapp && molecule test
+```
+
 ## 🔍 Code Quality and Linting
 
 This project includes both ansible-lint and yamllint configurations for maintaining code quality and best practices.

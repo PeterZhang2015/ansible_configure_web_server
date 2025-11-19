@@ -1,0 +1,52 @@
+---
+- name: Verify
+  hosts: all
+  become: true
+  tasks:
+    - name: Load nginx defaults
+      ansible.builtin.include_vars:
+        file: "{{ lookup('env', 'MOLECULE_PROJECT_DIRECTORY') }}/roles/nginx/defaults/main.yml"
+
+    - name: Load webapp defaults
+      ansible.builtin.include_vars:
+        file: "{{ lookup('env', 'MOLECULE_PROJECT_DIRECTORY') }}/roles/webapp/defaults/main.yml"
+
+    - name: Check if nginx is running
+      ansible.builtin.systemd:
+        name: nginx
+      register: nginx_service
+      failed_when: nginx_service.status.ActiveState != "active"
+
+    - name: Check if web content is accessible
+      ansible.builtin.uri:
+        url: http://localhost:80
+        return_content: true
+      register: web_response
+      retries: 5
+      delay: 3
+      until: web_response.status == 200
+
+    - name: Debug web response
+      ansible.builtin.debug:
+        var: web_response.content
+
+    - name: Verify web content
+      ansible.builtin.assert:
+        that:
+          - web_response.status == 200
+          - "'html' in (web_response.content | lower)"
+        fail_msg: >-
+          Web server is not serving HTML content.
+          Status: {{ web_response.status }}, Content preview: {{ web_response.content[:200] }}
+
+    - name: Check if index.html exists
+      ansible.builtin.stat:
+        path: "{{ webapp_document_root }}/index.html"
+      register: index_file
+
+    - name: Verify complete deployment
+      ansible.builtin.assert:
+        that:
+          - index_file.stat.exists
+          - nginx_service.status.ActiveState == "active"
+        fail_msg: "Full deployment verification failed"
