@@ -2,12 +2,14 @@
 - name: Verify
   hosts: all
   become: true
-  vars:
-    document_root: /var/www/html
   tasks:
     - name: Load nginx defaults
       ansible.builtin.include_vars:
         file: "{{ lookup('env', 'MOLECULE_PROJECT_DIRECTORY') }}/roles/nginx/defaults/main.yml"
+
+    - name: Load webapp defaults
+      ansible.builtin.include_vars:
+        file: "{{ lookup('env', 'MOLECULE_PROJECT_DIRECTORY') }}/roles/webapp/defaults/main.yml"
 
     - name: Check if nginx is running
       ansible.builtin.systemd:
@@ -39,7 +41,7 @@
 
     - name: Check if index.html exists
       ansible.builtin.stat:
-        path: "{{ document_root }}/index.html"
+        path: "{{ webapp_document_root }}/index.html"
       register: index_file
 
     - name: Verify complete deployment

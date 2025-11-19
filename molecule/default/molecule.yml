@@ -31,6 +31,9 @@ provisioner:
       interpreter_python: auto_silent
       callback_whitelist: profile_tasks, timer, yaml
   inventory:
+    group_vars:
+      all:
+        environment_name: "Molecule Test"
     host_vars:
       webapp-full-ubuntu:
         ansible_python_interpreter: /usr/bin/python3
