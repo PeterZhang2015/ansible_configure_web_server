@@ -35,9 +35,20 @@ rules:
   new-lines:
     type: unix
 
+  # ansible-lint compatibility requirements
+  comments:
+    min-spaces-from-content: 1
+  comments-indentation: false
+  braces:
+    max-spaces-inside: 1
+  octal-values:
+    forbid-implicit-octal: true
+    forbid-explicit-octal: true
+
 # Ignore certain paths
 ignore: |
   .vault_pass
   .cache/
   .github/
   templates/app_config.j2
+  molecule-venv/

@@ -1,0 +1,6 @@
+molecule>=6.0.0
+molecule-docker>=2.1.0
+ansible-core>=2.15,<2.18
+ansible-lint>=6.0.0
+docker>=6.0.0
+# Note: Do not install 'ansible' package, only ansible-core

@@ -3,6 +3,15 @@
 .vault_pass
 host_vars/*/vault.yml
 
+# Molecule testing
+molecule-venv/
+.molecule/
+__pycache__/
+*.pyc
+
+# Ansible collections (installed via galaxy)
+collections/ansible_collections/
+
 # SSH keys
 *.pem
 *.key

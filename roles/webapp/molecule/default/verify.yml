@@ -1,0 +1,50 @@
+---
+- name: Verify
+  hosts: all
+  become: true
+  tasks:
+    - name: Get document_root from defaults
+      ansible.builtin.include_vars:
+        file: ../../defaults/main.yml
+
+    - name: Check if web directory exists
+      ansible.builtin.stat:
+        path: "{{ webapp_document_root }}"
+      register: web_dir
+
+    - name: Verify web directory exists
+      ansible.builtin.assert:
+        that:
+          - web_dir.stat.exists
+          - web_dir.stat.isdir
+        fail_msg: "Web directory does not exist"
+
+    - name: Check if index.html exists
+      ansible.builtin.stat:
+        path: "{{ webapp_document_root }}/index.html"
+      register: index_file
+
+    - name: Verify index.html exists
+      ansible.builtin.assert:
+        that:
+          - index_file.stat.exists
+          - index_file.stat.isreg
+        fail_msg: "index.html file does not exist"
+
+    - name: Check file permissions
+      ansible.builtin.assert:
+        that:
+          - index_file.stat.mode == '0644'
+        fail_msg: "index.html has incorrect permissions"
+
+    - name: Verify index.html content
+      ansible.builtin.slurp:
+        src: "{{ webapp_document_root }}/index.html"
+      register: index_content
+
+    - name: Check HTML content is valid
+      ansible.builtin.assert:
+        that:
+          - "'html' in (index_content.content | b64decode | lower)"
+          - "'<!DOCTYPE' in (index_content.content | b64decode) or '<!doctype' in (index_content.content | b64decode)"
+        fail_msg: "index.html does not contain valid HTML"
