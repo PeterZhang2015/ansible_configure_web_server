@@ -1,0 +1,15 @@
+---
+- name: Prepare
+  hosts: all
+  gather_facts: false
+  tasks:
+    - name: Install Python 3 on CentOS 7
+      raw: |
+        if [ -f /etc/centos-release ]; then
+          yum install -y python3
+        fi
+      changed_when: false
+      when: ansible_os_family is not defined or ansible_os_family == "RedHat"
+
+    - name: Gather facts after Python 3 installation
+      ansible.builtin.setup:

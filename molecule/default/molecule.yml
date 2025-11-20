@@ -38,7 +38,7 @@ provisioner:
       webapp-full-ubuntu:
         ansible_python_interpreter: /usr/bin/python3
       webapp-full-centos:
-        ansible_python_interpreter: /usr/bin/python
+        ansible_python_interpreter: /usr/bin/python3
 verifier:
   name: ansible
 scenario:
