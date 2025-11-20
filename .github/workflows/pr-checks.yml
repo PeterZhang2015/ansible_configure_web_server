@@ -81,13 +81,10 @@ jobs:
 
       - name: Run Molecule tests
         id: molecule
-        env:
-          ANSIBLE_VERBOSITY: 3
-          ANSIBLE_STDOUT_CALLBACK: yaml
         run: |
           set -o pipefail
           echo "## Molecule Test Results" > molecule-results.txt
-          molecule --debug test 2>&1 | tee -a molecule-results.txt
+          molecule test 2>&1 | tee -a molecule-results.txt
 
       - name: Capture molecule logs
         if: always()
