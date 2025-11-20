@@ -8,6 +8,11 @@ on:
       - master
       - develop
 
+permissions:
+  contents: read
+  pull-requests: write
+  issues: write
+
 jobs:
   lint:
     name: Lint Checks
