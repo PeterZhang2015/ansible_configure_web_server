@@ -60,6 +60,9 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
@@ -69,6 +72,11 @@ jobs:
         run: |
           pip install -r requirements-test.txt
           ansible-galaxy collection install -r collections/requirements.yml
+
+      - name: Pull Docker images
+        run: |
+          docker pull geerlingguy/docker-ubuntu2204-ansible:latest
+          docker pull geerlingguy/docker-rockylinux9-ansible:latest
 
       - name: Run Molecule tests
         id: molecule
