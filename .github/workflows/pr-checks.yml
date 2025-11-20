@@ -1,0 +1,173 @@
+---
+name: PR Checks
+
+on:
+  pull_request:
+    branches:
+      - main
+      - master
+      - develop
+
+jobs:
+  lint:
+    name: Lint Checks
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: |
+          pip install ansible-core ansible-lint yamllint
+          ansible-galaxy collection install -r collections/requirements.yml
+
+      - name: Run yamllint
+        id: yamllint
+        continue-on-error: true
+        run: |
+          echo "## yamllint Results" > yamllint-results.txt
+          yamllint . >> yamllint-results.txt 2>&1 || echo "yamllint found issues"
+
+      - name: Run ansible-lint
+        id: ansible-lint
+        continue-on-error: true
+        run: |
+          echo "## ansible-lint Results" > ansible-lint-results.txt
+          ansible-lint >> ansible-lint-results.txt 2>&1 || echo "ansible-lint found issues"
+
+      - name: Upload lint results
+        uses: actions/upload-artifact@v4
+        with:
+          name: lint-results
+          path: |
+            yamllint-results.txt
+            ansible-lint-results.txt
+
+  molecule:
+    name: Molecule Tests
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: |
+          pip install -r requirements-test.txt
+          ansible-galaxy collection install -r collections/requirements.yml
+
+      - name: Run Molecule tests
+        id: molecule
+        continue-on-error: true
+        run: |
+          echo "## Molecule Test Results" > molecule-results.txt
+          molecule test >> molecule-results.txt 2>&1 || echo "Molecule tests found issues"
+
+      - name: Upload molecule results
+        uses: actions/upload-artifact@v4
+        with:
+          name: molecule-results
+          path: molecule-results.txt
+
+  playbook-check:
+    name: Playbook Check Mode
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        inventory:
+          - local
+          - dev
+          - prod
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install Ansible
+        run: |
+          pip install ansible-core
+          ansible-galaxy collection install -r collections/requirements.yml
+
+      - name: Run playbook check mode
+        id: playbook-check
+        continue-on-error: true
+        run: |
+          echo "## Playbook Check Mode - ${{ matrix.inventory }}" > playbook-check-${{ matrix.inventory }}.txt
+          ansible-playbook -i inventories/${{ matrix.inventory }}/hosts.yml \
+            playbooks/webapp.yml \
+            --check --diff >> playbook-check-${{ matrix.inventory }}.txt 2>&1 || echo "Check mode found issues"
+
+      - name: Upload playbook check results
+        uses: actions/upload-artifact@v4
+        with:
+          name: playbook-check-${{ matrix.inventory }}
+          path: playbook-check-${{ matrix.inventory }}.txt
+
+  comment:
+    name: Comment Results
+    runs-on: ubuntu-latest
+    needs: [lint, molecule, playbook-check]
+    if: always()
+    steps:
+      - name: Download all artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: results
+
+      - name: Prepare comment
+        id: prepare-comment
+        run: |
+          {
+            echo "## 🔍 Ansible PR Check Results"
+            echo ""
+            echo "### yamllint"
+            echo '```'
+            cat results/lint-results/yamllint-results.txt 2>/dev/null || echo "No results available"
+            echo '```'
+            echo ""
+            echo "### ansible-lint"
+            echo '```'
+            cat results/lint-results/ansible-lint-results.txt 2>/dev/null || echo "No results available"
+            echo '```'
+            echo ""
+            echo "### Molecule Tests"
+            echo '```'
+            cat results/molecule-results/molecule-results.txt 2>/dev/null || echo "No results available"
+            echo '```'
+            echo ""
+            echo "### Playbook Check Mode"
+            for env in local dev prod; do
+              echo "#### Environment: $env"
+              echo '```'
+              cat results/playbook-check-$env/playbook-check-$env.txt 2>/dev/null || echo "No results available"
+              echo '```'
+              echo ""
+            done
+          } > comment.txt
+
+      - name: Comment on PR
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            const comment = fs.readFileSync('comment.txt', 'utf8');
+            
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: comment
+            });
