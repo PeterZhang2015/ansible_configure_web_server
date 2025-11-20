@@ -77,7 +77,7 @@ jobs:
       - name: Pull Docker images
         run: |
           docker pull geerlingguy/docker-ubuntu2204-ansible:latest
-          docker pull geerlingguy/docker-almalinux9-ansible:latest
+          docker pull geerlingguy/docker-fedora39-ansible:latest
 
       - name: Run Molecule tests
         id: molecule
