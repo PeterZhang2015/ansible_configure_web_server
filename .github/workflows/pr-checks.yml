@@ -33,19 +33,18 @@ jobs:
 
       - name: Run yamllint
         id: yamllint
-        continue-on-error: true
         run: |
           echo "## yamllint Results" > yamllint-results.txt
-          yamllint . >> yamllint-results.txt 2>&1 || echo "yamllint found issues"
+          yamllint . 2>&1 | tee -a yamllint-results.txt
 
       - name: Run ansible-lint
         id: ansible-lint
-        continue-on-error: true
         run: |
           echo "## ansible-lint Results" > ansible-lint-results.txt
-          ansible-lint >> ansible-lint-results.txt 2>&1 || echo "ansible-lint found issues"
+          ansible-lint 2>&1 | tee -a ansible-lint-results.txt
 
       - name: Upload lint results
+        if: always()
         uses: actions/upload-artifact@v4
         with:
           name: lint-results
@@ -80,12 +79,12 @@ jobs:
 
       - name: Run Molecule tests
         id: molecule
-        continue-on-error: true
         run: |
           echo "## Molecule Test Results" > molecule-results.txt
-          molecule test >> molecule-results.txt 2>&1 || echo "Molecule tests found issues"
+          molecule test 2>&1 | tee -a molecule-results.txt
 
       - name: Upload molecule results
+        if: always()
         uses: actions/upload-artifact@v4
         with:
           name: molecule-results
@@ -110,14 +109,14 @@ jobs:
 
       - name: Run playbook check mode
         id: playbook-check
-        continue-on-error: true
         run: |
           echo "## Playbook Check Mode - local" > playbook-check-local.txt
           ansible-playbook -i inventories/local/hosts.yml \
             playbooks/webapp.yml \
-            --check --diff >> playbook-check-local.txt 2>&1 || echo "Check mode found issues"
+            --check --diff 2>&1 | tee -a playbook-check-local.txt
 
       - name: Upload playbook check results
+        if: always()
         uses: actions/upload-artifact@v4
         with:
           name: playbook-check-local
