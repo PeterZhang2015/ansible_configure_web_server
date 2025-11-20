@@ -34,12 +34,14 @@ jobs:
       - name: Run yamllint
         id: yamllint
         run: |
+          set -o pipefail
           echo "## yamllint Results" > yamllint-results.txt
           yamllint . 2>&1 | tee -a yamllint-results.txt
 
       - name: Run ansible-lint
         id: ansible-lint
         run: |
+          set -o pipefail
           echo "## ansible-lint Results" > ansible-lint-results.txt
           ansible-lint 2>&1 | tee -a ansible-lint-results.txt
 
@@ -80,8 +82,9 @@ jobs:
       - name: Run Molecule tests
         id: molecule
         run: |
+          set -o pipefail
           echo "## Molecule Test Results" > molecule-results.txt
-          molecule test 2>&1 | tee -a molecule-results.txt
+          molecule test --debug 2>&1 | tee -a molecule-results.txt
 
       - name: Upload molecule results
         if: always()
@@ -110,6 +113,7 @@ jobs:
       - name: Run playbook check mode
         id: playbook-check
         run: |
+          set -o pipefail
           echo "## Playbook Check Mode - local" > playbook-check-local.txt
           ansible-playbook -i inventories/local/hosts.yml \
             playbooks/webapp.yml \
