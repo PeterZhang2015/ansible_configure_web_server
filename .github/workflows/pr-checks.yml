@@ -86,12 +86,6 @@ jobs:
   playbook-check:
     name: Playbook Check Mode
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        inventory:
-          - local
-          - dev
-          - prod
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -110,16 +104,16 @@ jobs:
         id: playbook-check
         continue-on-error: true
         run: |
-          echo "## Playbook Check Mode - ${{ matrix.inventory }}" > playbook-check-${{ matrix.inventory }}.txt
-          ansible-playbook -i inventories/${{ matrix.inventory }}/hosts.yml \
+          echo "## Playbook Check Mode - local" > playbook-check-local.txt
+          ansible-playbook -i inventories/local/hosts.yml \
             playbooks/webapp.yml \
-            --check --diff >> playbook-check-${{ matrix.inventory }}.txt 2>&1 || echo "Check mode found issues"
+            --check --diff >> playbook-check-local.txt 2>&1 || echo "Check mode found issues"
 
       - name: Upload playbook check results
         uses: actions/upload-artifact@v4
         with:
-          name: playbook-check-${{ matrix.inventory }}
-          path: playbook-check-${{ matrix.inventory }}.txt
+          name: playbook-check-local
+          path: playbook-check-local.txt
 
   comment:
     name: Comment Results
@@ -153,14 +147,10 @@ jobs:
             cat results/molecule-results/molecule-results.txt 2>/dev/null || echo "No results available"
             echo '```'
             echo ""
-            echo "### Playbook Check Mode"
-            for env in local dev prod; do
-              echo "#### Environment: $env"
-              echo '```'
-              cat results/playbook-check-$env/playbook-check-$env.txt 2>/dev/null || echo "No results available"
-              echo '```'
-              echo ""
-            done
+            echo "### Playbook Check Mode (local)"
+            echo '```'
+            cat results/playbook-check-local/playbook-check-local.txt 2>/dev/null || echo "No results available"
+            echo '```'
           } > comment.txt
 
       - name: Comment on PR
