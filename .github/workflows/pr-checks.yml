@@ -81,10 +81,12 @@ jobs:
 
       - name: Run Molecule tests
         id: molecule
+        env:
+          ANSIBLE_VERBOSITY: 2
         run: |
           set -o pipefail
           echo "## Molecule Test Results" > molecule-results.txt
-          molecule test --debug 2>&1 | tee -a molecule-results.txt
+          molecule test 2>&1 | tee -a molecule-results.txt
 
       - name: Upload molecule results
         if: always()
