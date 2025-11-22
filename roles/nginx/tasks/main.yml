@@ -12,7 +12,7 @@
   when: ansible_os_family == "RedHat"
 
 - name: Install nginx
-  ansible.builtin.package:
+  package:
     name: nginx
     state: present
 
@@ -35,7 +35,7 @@
   notify: restart nginx
 
 - name: Ensure systemd is ready
-  ansible.builtin.systemd:
+  ansible.builtin.systemdx:
     daemon_reload: true
 
 - name: Start and enable nginx service
